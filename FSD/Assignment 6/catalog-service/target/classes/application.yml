@@ -1,0 +1,50 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: catalog-service
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/catalog_db
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 10
+          max-idle: 5
+          min-idle: 2
+          max-wait: 1000ms
+  cache:
+    type: redis
+    redis:
+      time-to-live: 1800000  # Default 30 minutes in ms
+      cache-null-values: false
+      enable-statistics: true
+
+app:
+  jwt:
+    secret: 9a4f2c8d3b7a1e5f8g9h0i1j2k3l4m5n6o7p8q9r0s1t2u3v4w5x6y7z8a9b0c1d2e3f4g5h6i7j8k9l0m1n2o3p4q5r6s7t8u9v0w1x2y3z4a5b6c7d8e9f0
+
+# Actuator Configuration for Cache Monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,caches,metrics
+  endpoint:
+    health:
+      show-details: always
+    caches:
+      enabled: true
+  health:
+    redis:
+      enabled: true
+
+# Logging Configuration
+logging:
+  level:
+    com.assignment.catalog: DEBUG
+    org.springframework.cache: TRACE

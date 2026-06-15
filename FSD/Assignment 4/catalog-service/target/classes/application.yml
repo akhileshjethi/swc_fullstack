@@ -1,0 +1,15 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: catalog-service
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/catalog_db
+
+app:
+  jwt:
+    # A standard base64 encoded HMAC-SHA key for signing/verifying HS256 tokens locally if needed,
+    # or we can parse JWT strings directly. We'll use this secret to parse/verify if not relying on JWKS.
+    secret: 9a4f2c8d3b7a1e5f8g9h0i1j2k3l4m5n6o7p8q9r0s1t2u3v4w5x6y7z8a9b0c1d2e3f4g5h6i7j8k9l0m1n2o3p4q5r6s7t8u9v0w1x2y3z4a5b6c7d8e9f0

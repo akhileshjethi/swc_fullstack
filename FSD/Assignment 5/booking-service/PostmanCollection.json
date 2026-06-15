@@ -1,0 +1,309 @@
+{
+	"info": {
+		"_postman_id": "84824d57-195f-466a-bb91-44702951f28b",
+		"name": "Booking Service REST API",
+		"description": "Postman Collection for testing Spring Boot Booking Service microservice API endpoints.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Shows",
+			"item": [
+				{
+					"name": "Create Show",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"movieId\": \"MOV123\",\n    \"theatreId\": \"THE123\",\n    \"auditoriumId\": \"AUD123\",\n    \"startTime\": \"2026-08-01T18:00:00\",\n    \"endTime\": \"2026-08-01T21:00:00\",\n    \"language\": \"English\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/shows",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"shows"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Shows",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/shows?page=0&size=10&sortBy=startTime&direction=asc",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"shows"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								},
+								{
+									"key": "sortBy",
+									"value": "startTime"
+								},
+								{
+									"key": "direction",
+									"value": "asc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Shows",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/shows/search?movieId=MOV123&theatreId=THE123&date=2026-08-01",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"shows",
+								"search"
+							],
+							"query": [
+								{
+									"key": "movieId",
+									"value": "MOV123"
+								},
+								{
+									"key": "theatreId",
+									"value": "THE123"
+								},
+								{
+									"key": "date",
+									"value": "2026-08-01"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Show Seats Layout",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/shows/101/seats",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"shows",
+								"101",
+								"seats"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Bookings",
+			"item": [
+				{
+					"name": "Lock Seats",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"showId\": 101,\n    \"seatNumbers\": [\n        \"A1\",\n        \"A2\"\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/bookings/lock",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"bookings",
+								"lock"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Initiate Booking",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"showId\": 101,\n    \"seatNumbers\": [\n        \"A1\",\n        \"A2\"\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/bookings",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"bookings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Confirm Booking",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/bookings/1/confirm",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"bookings",
+								"1",
+								"confirm"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Booking",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/bookings/1/cancel",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"bookings",
+								"1",
+								"cancel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Bookings History",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/bookings/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"bookings",
+								"user"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8082",
+			"type": "string"
+		},
+		{
+			"key": "jwt_token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyMTIzIiwicm9sZXMiOlsiVVNFUiIsIkFETUlOIl0sImV4cCI6MTg4MjcyNDAwMH0.dummy_sig",
+			"type": "string"
+		}
+	]
+}

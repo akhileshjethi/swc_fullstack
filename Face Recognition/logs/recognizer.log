@@ -1,0 +1,30 @@
+[2026-06-06 00:26:58,046] INFO     src.recognizer            | __init__             | Initializing Face Recognition Pipeline...
+[2026-06-06 00:27:12,163] INFO     src.recognizer            | __init__             | Pipeline ready | 0 registered persons | threshold=0.85 | metric=cosine
+[2026-06-06 00:27:56,549] INFO     src.recognizer            | __init__             | Initializing Face Recognition Pipeline...
+[2026-06-06 00:27:56,922] INFO     src.recognizer            | __init__             | Pipeline ready | 0 registered persons | threshold=0.85 | metric=cosine
+[2026-06-06 00:29:48,783] INFO     src.recognizer            | recognize            | Face 1: ✗ Unknown (confidence: 0.0%)
+[2026-06-06 00:30:37,481] INFO     src.recognizer            | register_face        | Registering face for: 'Akhilesh'
+[2026-06-06 00:30:40,136] INFO     src.recognizer            | register_face        | Successfully registered 'Akhilesh' with 6 embeddings (detection confidence: 100.0%)
+[2026-06-06 00:30:50,371] INFO     src.recognizer            | recognize            | Face 1: ✗ Unknown (confidence: 0.0%)
+[2026-06-06 00:31:05,531] INFO     src.recognizer            | recognize            | Face 1: ✓ Akhilesh (confidence: 98.1%)
+[2026-06-06 00:31:24,518] INFO     src.recognizer            | recognize            | Face 1: ✗ Unknown (confidence: 0.0%)
+[2026-06-06 00:32:25,013] INFO     src.recognizer            | recognize            | Face 1: ✗ Unknown (confidence: 0.0%)
+[2026-06-06 00:33:21,691] INFO     src.recognizer            | register_face        | Registering face for: 'Akhilesh'
+[2026-06-06 00:33:24,158] INFO     src.recognizer            | register_face        | Successfully registered 'Akhilesh' with 6 embeddings (detection confidence: 100.0%)
+[2026-06-06 00:33:24,171] INFO     src.recognizer            | register_face        | Registering face for: 'Akhilesh'
+[2026-06-06 00:33:25,217] INFO     src.recognizer            | register_face        | Successfully registered 'Akhilesh' with 6 embeddings (detection confidence: 99.6%)
+[2026-06-06 00:33:34,255] INFO     src.recognizer            | recognize            | Face 1: ✗ Unknown (confidence: 0.0%)
+[2026-06-06 00:33:49,238] INFO     src.recognizer            | recognize            | Face 1: ✗ Unknown (confidence: 0.0%)
+[2026-06-06 00:35:09,193] INFO     src.recognizer            | register_face        | Registering face for: 'Akhilesh'
+[2026-06-06 00:35:11,759] INFO     src.recognizer            | register_face        | Successfully registered 'Akhilesh' with 6 embeddings (detection confidence: 100.0%)
+[2026-06-06 00:35:11,771] INFO     src.recognizer            | register_face        | Registering face for: 'Akhilesh'
+[2026-06-06 00:35:12,850] INFO     src.recognizer            | register_face        | Successfully registered 'Akhilesh' with 6 embeddings (detection confidence: 99.6%)
+[2026-06-06 00:35:12,856] INFO     src.recognizer            | register_face        | Registering face for: 'Akhilesh'
+[2026-06-06 00:35:13,725] INFO     src.recognizer            | register_face        | Successfully registered 'Akhilesh' with 6 embeddings (detection confidence: 100.0%)
+[2026-06-06 00:35:13,746] INFO     src.recognizer            | register_face        | Registering face for: 'Akhilesh'
+[2026-06-06 00:35:14,563] INFO     src.recognizer            | register_face        | Successfully registered 'Akhilesh' with 6 embeddings (detection confidence: 100.0%)
+[2026-06-06 00:35:23,263] INFO     src.recognizer            | recognize            | Face 1: ✓ Akhilesh (confidence: 89.7%)
+[2026-06-06 00:35:34,808] INFO     src.recognizer            | recognize            | Face 1: ✓ Akhilesh (confidence: 89.7%)
+[2026-06-06 00:35:45,332] INFO     src.recognizer            | recognize            | Face 1: ✗ Unknown (confidence: 0.0%)
+[2026-06-06 00:35:51,517] INFO     src.recognizer            | recognize            | Face 1: ✗ Unknown (confidence: 0.0%)
+[2026-06-06 00:35:57,568] INFO     src.recognizer            | recognize            | Face 1: ✓ Akhilesh (confidence: 90.2%)

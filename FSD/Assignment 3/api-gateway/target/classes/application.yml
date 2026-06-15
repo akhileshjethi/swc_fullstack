@@ -1,0 +1,38 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: auth-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/auth/**
+        - id: movie-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/movies/**
+          filters:
+            - JwtAuthenticationFilter
+        - id: booking-service
+          uri: http://localhost:8083
+          predicates:
+            - Path=/booking/**
+          filters:
+            - JwtAuthenticationFilter
+
+jwt:
+  secret: "9a4f2c8d3b7a1e5f8g9h0j1k2l3m4n5o6p7q8r9s0t1u2v3w4x5y6z7a8b9c0d1e2f3g4h5i6j7k8l9m0n1o2p3q4r5s6t7u8v9w0x1y2z3a4b5c6d7e8f9"
+  expiration: 86400000 # 24 hours in milliseconds
+
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.gateway: INFO
+    org.springframework.security: INFO
+    com.assignment.gateway: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"

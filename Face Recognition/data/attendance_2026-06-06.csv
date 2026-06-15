@@ -1,0 +1,5 @@
+Name,Timestamp,Confidence,Method,Notes
+Akhilesh,2026-06-06 00:59:19,1.0,face_recognition,Post-restart local timezone test
+Akhilesh,2026-06-05 19:26:38,1.0,face_recognition,Local timezone test
+Akhilesh,2026-06-05 19:26:12,1.0,face_recognition,Local timezone test
+Akhilesh,2026-06-05 19:24:02,1.0,face_recognition,Test manual mark

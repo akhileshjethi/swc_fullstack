@@ -1,0 +1,23 @@
+[2026-06-06 00:26:30,296] DEBUG    src.database              │ _create_tables       │ Database tables verified/created
+[2026-06-06 00:26:30,296] INFO     src.database              │ __init__             │ FaceDatabase initialized | path=C:\Users\AKHILESH\OneDrive\ドキュメント\PERSONAL\Projects\Face Recognition\db\faces.db | 0 registered persons
+[2026-06-06 00:26:30,315] INFO     src.database              │ close                │ Database connection closed
+[2026-06-06 00:27:12,162] DEBUG    src.database              | _create_tables       | Database tables verified/created
+[2026-06-06 00:27:12,162] INFO     src.database              | __init__             | FaceDatabase initialized | path=C:\Users\AKHILESH\OneDrive\ドキュメント\PERSONAL\Projects\Face Recognition\db\faces.db | 0 registered persons
+[2026-06-06 00:27:56,918] DEBUG    src.database              | _create_tables       | Database tables verified/created
+[2026-06-06 00:27:56,918] INFO     src.database              | __init__             | FaceDatabase initialized | path=C:\Users\AKHILESH\OneDrive\ドキュメント\PERSONAL\Projects\Face Recognition\db\faces.db | 0 registered persons
+[2026-06-06 00:30:40,132] INFO     src.database              | register_person      | Registered new person: 'Akhilesh' (id=1)
+[2026-06-06 00:30:40,136] INFO     src.database              | register_person      | Stored 6 embeddings for 'Akhilesh' (total: 6)
+[2026-06-06 00:32:52,492] INFO     src.database              | delete_person        | Deleted person 'Akhilesh' (id=1) and all embeddings
+[2026-06-06 00:33:24,154] INFO     src.database              | register_person      | Registered new person: 'Akhilesh' (id=2)
+[2026-06-06 00:33:24,157] INFO     src.database              | register_person      | Stored 6 embeddings for 'Akhilesh' (total: 6)
+[2026-06-06 00:33:25,214] INFO     src.database              | register_person      | Person 'Akhilesh' already exists (id=2), adding embeddings
+[2026-06-06 00:33:25,217] INFO     src.database              | register_person      | Stored 6 embeddings for 'Akhilesh' (total: 12)
+[2026-06-06 00:34:31,808] INFO     src.database              | delete_person        | Deleted person 'Akhilesh' (id=2) and all embeddings
+[2026-06-06 00:35:11,757] INFO     src.database              | register_person      | Registered new person: 'Akhilesh' (id=3)
+[2026-06-06 00:35:11,759] INFO     src.database              | register_person      | Stored 6 embeddings for 'Akhilesh' (total: 6)
+[2026-06-06 00:35:12,848] INFO     src.database              | register_person      | Person 'Akhilesh' already exists (id=3), adding embeddings
+[2026-06-06 00:35:12,850] INFO     src.database              | register_person      | Stored 6 embeddings for 'Akhilesh' (total: 12)
+[2026-06-06 00:35:13,722] INFO     src.database              | register_person      | Person 'Akhilesh' already exists (id=3), adding embeddings
+[2026-06-06 00:35:13,724] INFO     src.database              | register_person      | Stored 6 embeddings for 'Akhilesh' (total: 18)
+[2026-06-06 00:35:14,561] INFO     src.database              | register_person      | Person 'Akhilesh' already exists (id=3), adding embeddings
+[2026-06-06 00:35:14,563] INFO     src.database              | register_person      | Stored 6 embeddings for 'Akhilesh' (total: 24)
