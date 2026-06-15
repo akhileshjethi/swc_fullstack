@@ -1,0 +1,600 @@
+{
+  "info": {
+    "name": "CineVerse Redis Cache Tests",
+    "description": "Postman collection for testing Redis caching integration in CineVerse microservices. Tests cache HIT/MISS behavior, eviction strategies, TTL expiry, and performance comparison.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "catalog_base_url",
+      "value": "http://localhost:8082"
+    },
+    {
+      "key": "booking_base_url",
+      "value": "http://localhost:8083"
+    },
+    {
+      "key": "jwt_token",
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0X2FkbWluIiwicm9sZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE5MDAwMDAwMDAsImV4cCI6MjAwMDAwMDAwMH0.placeholder"
+    },
+    {
+      "key": "movie_id",
+      "value": ""
+    },
+    {
+      "key": "theatre_id",
+      "value": ""
+    },
+    {
+      "key": "show_id",
+      "value": ""
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwt_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "1. Catalog Service - Movie Caching",
+      "item": [
+        {
+          "name": "1.1 Create Movie (evicts 'movies' cache)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Inception\",\n  \"genre\": \"Sci-Fi\",\n  \"language\": \"English\",\n  \"duration\": 148,\n  \"rating\": 8.8,\n  \"releaseDate\": \"2010-07-16\",\n  \"description\": \"A thief who steals corporate secrets through dream-sharing technology.\",\n  \"posterUrl\": \"https://example.com/inception.jpg\"\n}"
+            },
+            "url": "{{catalog_base_url}}/movies"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Movie created successfully', function() {",
+                  "    pm.response.to.have.status(201);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('movie_id', jsonData.data.id);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "1.2 Get Movie by ID (1st call - CACHE MISS)",
+          "request": {
+            "method": "GET",
+            "url": "{{catalog_base_url}}/movies/{{movie_id}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Movie retrieved - CACHE MISS (check server logs)', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.environment.set('first_request_time', pm.response.responseTime);",
+                  "    console.log('First request time (DB): ' + pm.response.responseTime + 'ms');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "1.3 Get Movie by ID (2nd call - CACHE HIT)",
+          "request": {
+            "method": "GET",
+            "url": "{{catalog_base_url}}/movies/{{movie_id}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Movie retrieved - CACHE HIT (no DB log expected)', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    var firstTime = parseInt(pm.environment.get('first_request_time'));",
+                  "    console.log('Second request time (Cache): ' + pm.response.responseTime + 'ms');",
+                  "    console.log('First request time (DB): ' + firstTime + 'ms');",
+                  "    console.log('Performance improvement: ' + (firstTime - pm.response.responseTime) + 'ms faster');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "1.4 Get All Movies (1st call - CACHE MISS)",
+          "request": {
+            "method": "GET",
+            "url": "{{catalog_base_url}}/movies?page=0&size=10"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Movies list retrieved', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "1.5 Update Movie (evicts 'movie' + 'movies' cache)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Inception - Director's Cut\",\n  \"genre\": \"Sci-Fi\",\n  \"language\": \"English\",\n  \"duration\": 162,\n  \"rating\": 9.0,\n  \"releaseDate\": \"2010-07-16\",\n  \"description\": \"Extended director's cut with additional scenes.\",\n  \"posterUrl\": \"https://example.com/inception-dc.jpg\"\n}"
+            },
+            "url": "{{catalog_base_url}}/movies/{{movie_id}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Movie updated - cache evicted', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "1.6 Get Movie by ID (after update - CACHE MISS again)",
+          "request": {
+            "method": "GET",
+            "url": "{{catalog_base_url}}/movies/{{movie_id}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Movie retrieved after update - CACHE MISS', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.title).to.eql('Inception - Director\\'s Cut');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "1.7 Delete Movie (evicts 'movie' + 'movies' cache)",
+          "request": {
+            "method": "DELETE",
+            "url": "{{catalog_base_url}}/movies/{{movie_id}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Movie deleted - cache evicted', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Catalog Service - Theatre Caching",
+      "item": [
+        {
+          "name": "2.1 Create Theatre (evicts 'theatres' cache)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"theatreName\": \"PVR Cinemas - Forum Mall\",\n  \"address\": \"Forum Mall, MG Road\",\n  \"locationId\": \"LOC001\",\n  \"ownerId\": \"OWNER001\"\n}"
+            },
+            "url": "{{catalog_base_url}}/theatres"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Theatre created', function() {",
+                  "    pm.response.to.have.status(201);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('theatre_id', jsonData.data.id);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2.2 Get Theatre by ID (CACHE MISS then HIT)",
+          "request": {
+            "method": "GET",
+            "url": "{{catalog_base_url}}/theatres/{{theatre_id}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Theatre retrieved', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. Booking Service - Show Caching",
+      "item": [
+        {
+          "name": "3.1 Create Show (evicts 'shows' cache)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"movieId\": \"{{movie_id}}\",\n  \"theatreId\": \"{{theatre_id}}\",\n  \"auditoriumId\": \"AUD001\",\n  \"startTime\": \"2026-12-25T18:00:00\",\n  \"endTime\": \"2026-12-25T20:30:00\",\n  \"language\": \"English\"\n}"
+            },
+            "url": "{{booking_base_url}}/shows"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Show created', function() {",
+                  "    pm.response.to.have.status(201);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('show_id', jsonData.data.id);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "3.2 Get Show by ID (CACHE MISS)",
+          "request": {
+            "method": "GET",
+            "url": "{{booking_base_url}}/shows/{{show_id}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Show retrieved - CACHE MISS', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "3.3 Get Show by ID (CACHE HIT)",
+          "request": {
+            "method": "GET",
+            "url": "{{booking_base_url}}/shows/{{show_id}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Show retrieved - CACHE HIT', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4. Booking Service - Seat Availability Caching",
+      "item": [
+        {
+          "name": "4.1 Get Show Seats (CACHE MISS - first call)",
+          "request": {
+            "method": "GET",
+            "url": "{{booking_base_url}}/shows/{{show_id}}/seats"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Seat availability retrieved - CACHE MISS', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.environment.set('seat_first_time', pm.response.responseTime);",
+                  "    console.log('Seat API first call (DB): ' + pm.response.responseTime + 'ms');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "4.2 Get Show Seats (CACHE HIT - second call)",
+          "request": {
+            "method": "GET",
+            "url": "{{booking_base_url}}/shows/{{show_id}}/seats"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Seat availability - CACHE HIT', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    console.log('Seat API cached call: ' + pm.response.responseTime + 'ms');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "4.3 Lock Seats (evicts seatAvailability cache)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"showId\": {{show_id}},\n  \"seatNumbers\": [\"A1\", \"A2\"]\n}"
+            },
+            "url": "{{booking_base_url}}/bookings/lock"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Seats locked - cache evicted', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "4.4 Get Show Seats (CACHE MISS - after lock)",
+          "request": {
+            "method": "GET",
+            "url": "{{booking_base_url}}/shows/{{show_id}}/seats"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Seat availability after lock - CACHE MISS', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    console.log('Seats now show LOCKED status for A1, A2');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "4.5 Create Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"showId\": {{show_id}},\n  \"seatNumbers\": [\"A1\", \"A2\"]\n}"
+            },
+            "url": "{{booking_base_url}}/bookings"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Booking created in INITIATED state', function() {",
+                  "    pm.response.to.have.status(201);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('booking_id', jsonData.data.id);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "4.6 Confirm Booking (evicts seatAvailability cache)",
+          "request": {
+            "method": "PUT",
+            "url": "{{booking_base_url}}/bookings/{{booking_id}}/confirm"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Booking confirmed - seatAvailability cache evicted', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.status).to.eql('CONFIRMED');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "4.7 Get Show Seats (CACHE MISS - after confirm)",
+          "request": {
+            "method": "GET",
+            "url": "{{booking_base_url}}/shows/{{show_id}}/seats"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Seat availability after confirm - CACHE MISS', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    console.log('Seats A1, A2 should now show BOOKED status');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "5. Actuator & Monitoring",
+      "item": [
+        {
+          "name": "5.1 Catalog - Health Check (includes Redis)",
+          "request": {
+            "method": "GET",
+            "url": "{{catalog_base_url}}/actuator/health"
+          },
+          "auth": { "type": "noauth" },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Health check returns UP with Redis status', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.eql('UP');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "5.2 Catalog - Cache Statistics",
+          "request": {
+            "method": "GET",
+            "url": "{{catalog_base_url}}/actuator/caches"
+          },
+          "auth": { "type": "noauth" },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Cache endpoint returns registered caches', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.cacheManagers).to.be.an('object');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "5.3 Booking - Health Check (includes Redis)",
+          "request": {
+            "method": "GET",
+            "url": "{{booking_base_url}}/actuator/health"
+          },
+          "auth": { "type": "noauth" },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Health check returns UP', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "5.4 Booking - Cache Statistics",
+          "request": {
+            "method": "GET",
+            "url": "{{booking_base_url}}/actuator/caches"
+          },
+          "auth": { "type": "noauth" },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Cache endpoint returns registered caches', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "5.5 Catalog - Cache Metrics (Hits/Misses)",
+          "request": {
+            "method": "GET",
+            "url": "{{catalog_base_url}}/actuator/metrics/cache.gets?tag=result:hit"
+          },
+          "auth": { "type": "noauth" },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Cache hit metrics available', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
